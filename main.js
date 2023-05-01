@@ -1650,6 +1650,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                   function addedGeoTiffLayer() {
                     // Store the current bounds and zoom level
+                    map.removeLayer(imageOverlay)
                     searchResultClicked = true;
                     addedGeoTiffLayers.forEach((geoTiffLayer) =>{
                       layerControl.removeLayer(geoTiffLayer)
