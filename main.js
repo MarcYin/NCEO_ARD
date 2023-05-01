@@ -1499,7 +1499,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           onEachFeature: function(feature, layer) {
             if (feature.links && feature.links.length > 0) {
               const selfURL = feature.links[3].href;
-              fetch(selfURL)
+              const httpsURL = selfURL.replace('http://', 'https://').replace(':8080', '');
+              fetch(httpsURL)
                 .then(response => response.json())
                 .then(data => {
                   const previewUrl = data.assets.BOA_thumbnal.href;
