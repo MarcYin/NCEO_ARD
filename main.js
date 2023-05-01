@@ -603,6 +603,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const cloudCover = feature.properties['eo:cloud_cover'];
           const selfURL = feature.links[3].href;
           const httpsURL = selfURL.replace('http://', 'https://').replace(':8080', '');
+          console.log(httpsURL);
           try {
             const featureData = await fetch(httpsURL);
             if (featureData.ok) {
