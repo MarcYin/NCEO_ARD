@@ -602,9 +602,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           const date = new Date(feature.properties.datetime).toDateString();
           const cloudCover = feature.properties['eo:cloud_cover'];
           const selfURL = feature.links[3].href;
-      
+          const httpsURL = selfURL.replace('http://', 'https://').replace(':8080', '');
           try {
-            const featureData = await fetch(selfURL);
+            const featureData = await fetch(httpsURL);
             if (featureData.ok) {
               const jsonFeatureData = await featureData.json();
               const imagePreviewBox = await createImagePreviewBox(jsonFeatureData);
