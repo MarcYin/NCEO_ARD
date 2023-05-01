@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   
   async function fetchDataOverFeature(layer, dropDownContainer) {
-    const stacApiSearchUrl = 'http://192.171.169.103:8080/search';
+    const stacApiSearchUrl = 'https://192.171.169.103/search';
   
     let bounds;
 
@@ -635,7 +635,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   
   async function fetchDataTS(layer, dropDownContainer) {
-    const stacApiSearchUrl = 'http://192.171.169.103:8080/search';
+    const stacApiSearchUrl = 'https://192.171.169.103/search';
   
     const latLng = layer.getLatLng();
     const buffer = 0.0001; // You can adjust this value according to your needs
@@ -1467,7 +1467,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function fetchSatelliteImages(searchOptions) {
     const searchResults = document.getElementById('search-results');
     let highlightedResult = null;
-    const stacApiSearchUrl = 'http://192.171.169.103:8080/search';
+    const stacApiSearchUrl = 'https://192.171.169.103/search';
   
     // // Clear search results and remove layers
     searchResults.innerHTML = "";
