@@ -1698,7 +1698,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
                   searchResult.addEventListener('click', addedGeoTiffLayer);
-                  layer.addEventListener('click', addedGeoTiffLayer);
+                  // layer.addEventListener('click', addedGeoTiffLayer);
                   
 
                   document.getElementById('back-to-search-results').addEventListener('click', function () {
