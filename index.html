@@ -1,0 +1,111 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/underscore@1.13.1/underscore-min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/flatgeobuf@3.22.0/dist/flatgeobuf-geojson.min.js"></script>
+    <script src="https://unpkg.com/json-formatter-js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.rawgit.com/hayeswise/Leaflet.PointInPolygon/v1.0.0/wise-leaflet-pip.js"></script>
+    <script src="https://lab.digital-democracy.org/leaflet-bing-layer/leaflet-bing-layer.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.7.0/dist/geosearch.umd.js"></script>
+    <!-- Include base CSS (optional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css"/>
+    <!-- Include Choices CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    <!-- Include Choices JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <link id="geosearchStyle" rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.7.0/dist/geosearch.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Include the rangePlugin -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <!-- Add Leaflet.draw styles -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <!-- Add Leaflet.draw scripts -->
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/proj4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/geotiff"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+    <script src="./Leaflet.ImageOverlay.Rotated.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/leaflet-circle-to-polygon@1.0.0/leaflet.circle.topolygon-min.min.js
+    "></script>
+
+    <script type="module">
+      import geotiffGeokeysToProj4 from 'https://cdn.skypack.dev/geotiff-geokeys-to-proj4';
+    </script>
+    <link rel="stylesheet" href="map.css">
+</head>
+<body>
+  <div id="search">
+    <table>
+      <tr>
+        <td>
+          <span class="emoji">📅</span>
+          <input type="text" id="date-range" placeholder="Select date range">
+        </td>
+      </tr>
+      <tr>
+        <td class="cloud-cover">
+          <span class="emoji">☁️</span>
+          <input type="range" id="cloud-cover-slider" min="0" max="100" value="10" step="1">
+          <span id="cloud-cover-value">10%</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button id="search-button" class="custom-button">Search</button>
+          <button id="back-to-search-results" class="custom-button" style="display: none;">Back to search results</button>
+        </td>
+      </tr>  
+      <tr>
+        <td class="field-analysis-cell">
+          <div id="analysis">
+            <button id="field-analysis-button" class="btn btn-primary custom-button">Field Analysis</button>
+            <span id="analysis-message" class="extra-info" style="display: none;">Click one image from the search results to perform field level analysis</span>
+          </div>
+        </td>
+      </tr>
+    
+    </table>    
+
+   </div>
+
+    <div id="search-results-wrapper">
+    <div id="search-results">
+      <!-- Search results items go here -->
+    </div>
+  </div>
+  <div id="map"></div>
+  <div id="analysis-panel" class="hidden" style="margin: 20px;">
+    <div id="analysis-panel-header">
+      <h1 style="font-family: Arial, sans-serif; font-size: 24px; color: #268dfb;">Geometry Buesket</h1>
+      <p style="font-family: Arial, sans-serif; font-size: 16px;">Draw some geometry on the map to check S2 NDVI.</p>
+    </div>
+    <div id="features-previews" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
+    <!-- <div id="plots" style="border: 1px solid #ccc; padding: 0px; margin-bottom: 20px;"></div>
+    <div id="timeSeries" style="border: 1px solid #ccc; padding: 0px;"></div> -->
+  </div>
+  <div id="timeBarContainer" class="time-bar-container">
+    <div id="ticksContainer" class="ticks-container"></div>
+</div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
+
+<!-- 
+create a web map, it would composed of three files: index.html, map.css and main.js
+It should have a panel on the left spaning 25% of the width and 75% of the width will be used for showing the map, 
+25% height of the left panel should have a search form with 2 fields, between time and cloud cover,
+Each of the search fields should be contained in a cell
+The between time cell should have a default value of 2017-01-01 to 2019-12-31
+Once slick the between time cell, it should popup a box showing the start time selection and end time selection side by side
+The start time should earlier than end time
+75% of the left pannel should be used for list of search results, each result should have a thumbnail, title, date and cloud cover
+the right panel should be used for showing the map
+the map should use leaflet as the base map
+Once mouse over the search result, the map should show the image footprint and the image should be highlighted in the search result list
+Once click on the search result, the map should show the image thumbnail into the leaflet basemap and the image should be highlighted in the search result list -->
