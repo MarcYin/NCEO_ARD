@@ -77,9 +77,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selectedStartDate = new Date(defaultDateStart);
   const selectedEndDate = new Date(defaultDateEnd);
 
-  
+  // the end data is the current date minus 16 days 
   const startDate = new Date(`${selectedStartDate.getFullYear()}-01-01`);
-  const endDate = new Date(`${selectedEndDate.getFullYear()}-12-31`);
+  // const endDate = new Date(`${selectedEndDate.getFullYear()}-12-31`);
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() - 16);
   
   let currentDate = new Date(startDate);
   const totalDuration = endDate.getTime() - startDate.getTime();
