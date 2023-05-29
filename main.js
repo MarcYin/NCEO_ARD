@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     enable: [
       {
         from: "2017-01-01",
-        to: "2019-12-31"
+        to: endDate.toISOString().split('T')[0],
       }
     ],
 
