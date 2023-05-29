@@ -730,7 +730,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const url_to_geotiff_file = feature.assets.boa_overview.href;
             const titiler_endpoint = "https://titiler.xyz";
-            var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}`;
+            var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
             
             timeDot.onmouseenter = () => {
               const dateString = datetime;
@@ -1011,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const url_to_geotiff_file = clickedFeature.assets.boa_overview.href;
     const titiler_endpoint = "https://titiler.xyz";
-    const titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}`;
+    const titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
 
     
     const pn = eventData.points[0].pointNumber;
@@ -1688,7 +1688,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     var titiler_endpoint = "https://titiler.xyz"; // Developmentseed Demo endpoint. Please be kind.
                     // var titiler_endpoint = "http://192.171.169.103:8000";
                     // titiler url
-                    var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}`;
+                    var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
                     const geoTiffLayer = L.tileLayer(titilerURL, {
                       maxZoom: 15,
                       minZoom: 5,
