@@ -50,8 +50,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const dateRangeInput = document.getElementById("date-range");
   const cloudCoverInput = document.getElementById('cloud-cover-slider')
 
-  const defaultDateStart = "2018-02-01";
-  const defaultDateEnd = "2018-09-30";
+  // default date start to be 1 jan of  current year 
+  // default date end to be 16 days ago
+  var defaultDateStart = new Date();
+  defaultDateStart.setDate(1);
+  defaultDateStart.setMonth(0);
+  defaultDateStart.setHours(0, 0, 0, 0);
+  var defaultDateEnd = new Date();
+  defaultDateEnd.setDate(defaultDateEnd.getDate() - 16);
+  defaultDateEnd.setHours(23, 59, 59, 999);
+  
+  defaultDateEnd = defaultDateEnd.toISOString().split('T')[0];
+  defaultDateStart = defaultDateStart.toISOString().split('T')[0];
+
+
+  // const defaultDateStart = "2023-01-01";
+  // const defaultDateEnd = "2018-09-30";
+  
   let selectedDateRange = defaultDateStart + "T00:00:00Z/" + defaultDateEnd + "T23:59:59Z";
 
   const fieldAnalysisZoom = 13
@@ -293,7 +308,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     
       previewBox.appendChild(title);
     
-
       // Create image
       const tiffUrl = feature.assets.B02.href;
       const tiff = await fromUrl(tiffUrl);
@@ -304,6 +318,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tileHeight = image.getTileHeight();
       const samplesPerPixel = image.getSamplesPerPixel();
       
+      
+
       const [ originX, originY ] = image.getOrigin();
       const [ xSize, ySize ] = image.getResolution();
       const uWidth = xSize * width;
@@ -659,11 +675,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // console.log(defaultDateStart)
     // console.log(defaultDateEnd)
-
+   
     // parse the year from defaultDateStart and defaultDateEnd string
-    const defaultDateStartYear = defaultDateStart.slice(0,4)
-    const defaultDateEndYear = defaultDateEnd.slice(0,4)
-    
+    const defaultDateStartYear = selectedDateRange.slice(0,4)
+    const defaultDateEndYear = selectedDateRange.slice(21,25)
+   
     
     let TSsearchBody = {
       "collections": ["UK-sentinel-2"],
@@ -703,9 +719,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     
         const features = data.features;
 
+        // const startDate = new Date(selectedDateRange.slice(0,10))
+        // const endDate = new Date(selectedDateRange.slice(21,31))
+        const startDate = new Date(`${defaultDateStartYear}-01-01`);
+        const endDate = new Date(`${defaultDateEndYear}-12-31`);
 
-        const startDate = new Date(`${selectedStartDate.getFullYear()}-01-01`);
-        const endDate = new Date(`${selectedEndDate.getFullYear()}-12-31`);
+        console.log(startDate);
+        console.log(endDate);
 
         const ticksContainer = document.getElementById('ticksContainer');
         // get feature datetime from features
@@ -716,6 +736,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         features.map(feature => {
           const datetime = feature.properties.datetime;
           const currentDate = new Date(datetime);
+          console.log(currentDate);
           // only add dots if cloud cover is less than the cloud bar value
           if (feature.properties['eo:cloud_cover'] < cloudCoverInput.value) {
 
@@ -730,7 +751,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const url_to_geotiff_file = feature.assets.boa_overview.href;
             const titiler_endpoint = "https://titiler.xyz";
-            var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
+            var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3&rescale=0,128`;
             
             timeDot.onmouseenter = () => {
               const dateString = datetime;
@@ -819,6 +840,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const tileHeight = image.getTileHeight();
           const samplesPerPixel = image.getSamplesPerPixel();
 
+          
           const [ originX, originY ] = image.getOrigin();
           const [ xSize, ySize ] = image.getResolution();
           const uWidth = xSize * width;
@@ -1011,7 +1033,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     const url_to_geotiff_file = clickedFeature.assets.boa_overview.href;
     const titiler_endpoint = "https://titiler.xyz";
-    const titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
+    const titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3&rescale=0,128`;
 
     
     const pn = eventData.points[0].pointNumber;
@@ -1688,7 +1710,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     var titiler_endpoint = "https://titiler.xyz"; // Developmentseed Demo endpoint. Please be kind.
                     // var titiler_endpoint = "http://192.171.169.103:8000";
                     // titiler url
-                    var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3`;
+                    var titilerURL = `${titiler_endpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${url_to_geotiff_file}&bidx=1&bidx=2&bidx=3&rescale=0,128`;
                     const geoTiffLayer = L.tileLayer(titilerURL, {
                       maxZoom: 15,
                       minZoom: 5,
