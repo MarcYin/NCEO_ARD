@@ -26,10 +26,11 @@
     <!-- Add Leaflet.draw scripts -->
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="https://unpkg.com/proj4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/geotiff"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/geotiff"></script> -->
     <script src="https://unpkg.com/georaster"></script>
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
     <script src="./Leaflet.ImageOverlay.Rotated.js"></script>
+    <!-- <script src="https://raw.githubusercontent.com/digidem/leaflet-side-by-side/gh-pages/leaflet-side-by-side.js"></script> -->
     <script src="
     https://cdn.jsdelivr.net/npm/leaflet-circle-to-polygon@1.0.0/leaflet.circle.topolygon-min.min.js
     "></script>
@@ -44,33 +45,57 @@
     <table>
       <tr>
         <td>
-          <span class="emoji">📅</span>
+          <!-- <span class="emoji">📅</span> -->
+          <label style="font-weight: bold; font-size: 1.2em;">📅 Choose dates:</label>
           <input type="text" id="date-range" placeholder="Select date range">
         </td>
       </tr>
+
       <tr>
         <td class="cloud-cover">
-          <span class="emoji">☁️</span>
+          <!-- <span class="emoji">☁️</span> -->
+          <label style="font-weight: bold; font-size: 1.2em;">☁️ Set Cloud Cover:</label>
           <input type="range" id="cloud-cover-slider" min="0" max="100" value="10" step="1">
           <span id="cloud-cover-value">10%</span>
         </td>
       </tr>
+
       <tr>
         <td>
-          <button id="search-button" class="custom-button">Search</button>
-          <button id="back-to-search-results" class="custom-button" style="display: none;">Back to search results</button>
-        </td>
-      </tr>  
-      <tr>
-        <td class="field-analysis-cell">
-          <div id="analysis">
-            <button id="field-analysis-button" class="btn btn-primary custom-button">Field Analysis</button>
-            <span id="analysis-message" class="extra-info" style="display: none;">Click one image from the search results to perform field level analysis</span>
-          </div>
+          <button id="search-button" class="custom-button" style="width: 100px; padding: 10px 15px; border: none; border-radius: 5px; background-color: #007BFF; color: white; font-size: 1.2em; transition: background-color 0.3s; margin-right: 5px; margin-bottom: 10px;">🔍</button>
+      
+          <button id="back-to-search-results" class="custom-button" style="display: none; width: 100px; padding: 10px 15px; border: none; border-radius: 5px; background-color: #6c757d; color: white; font-size: 1.2em; transition: background-color 0.3s; margin-right: 5px; margin-bottom: 10px;">⬅️</button>
+      
+          <button id="field-analysis-button" class="btn btn-primary custom-button" style="width: 210px; padding: 10px 15px; border: none; border-radius: 5px; background-color: #28a745; color: white; font-size: 1.2em; transition: background-color 0.3s;">🔬 Field Analysis</button>
         </td>
       </tr>
     
+      <!-- <tr>
+        <td class="field-analysis-cell">
+
+        </td>
+      </tr>
+     -->
+
+      <tr>
+        <td class="expression-input-cell">
+          <label for="expression-input" style="font-weight: bold; font-size: 1.2em;">📝 Enter Expression:</label>
+          <input type="text" id="expression-input" placeholder="(B8A-B04)/(B8A+B04)*(cloud<40)" value="(B8A-B04)/(B8A+B04)*(cloud<40)" style="width: 100%; padding: 10px; font-size: 0.8em; border-radius: 5px; border: 1px solid #ccc;">
+        </td>
+      </tr>
+    
+      <tr>
+        <td class="colormap-selection-cell">
+            <label for="colormap-selection" style="font-weight: bold; font-size: 1.2em;">🎨 Select Color Map:</label>
+            <input list="colormaps" id="colormap-selection" value="reds" style="width: 100%; padding: 5px; font-size: 0.8em; border-radius: 5px; border: 1px solid #ccc;">
+            <datalist id="colormaps">
+                <!-- Options will be generated dynamically -->
+            </datalist>
+        </td>
+    </tr>
+    
     </table>    
+
 
    </div>
 
@@ -83,7 +108,7 @@
   <div id="analysis-panel" class="hidden" style="margin: 20px;">
     <div id="analysis-panel-header">
       <h1 style="font-family: Arial, sans-serif; font-size: 24px; color: #268dfb;">Geometry Buesket</h1>
-      <p style="font-family: Arial, sans-serif; font-size: 16px;">Draw some geometry on the map to check S2 NDVI.</p>
+      <p style="font-family: Arial, sans-serif; font-size: 16px;">Draw Geometry to check values</p>
     </div>
     <div id="features-previews" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
     <!-- <div id="plots" style="border: 1px solid #ccc; padding: 0px; margin-bottom: 20px;"></div>
