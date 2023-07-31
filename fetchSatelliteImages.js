@@ -375,7 +375,10 @@ function fetchSatelliteImages(map, searchResults, analysisPanel, featureGroup, a
         const mgrs_ids = items.map(item => item.properties['sentinel:MGRS tile']);
         // console.log(mgrs_ids)
         const unique_mgrs_ids = [...new Set(mgrs_ids)];
-        const unique_items = unique_mgrs_ids.map(mgrs_id => items.find(item => item.properties['sentinel:MGRS tile'] === mgrs_id));
+        // remove ids within ['31UDS', '31UES', '31UFT', '31UDP', '31UFP']
+        const filtered_unique_mgrs_ids = unique_mgrs_ids.filter(mgrs_id => !['31UDS', '31UES', '31UFT', '31UDP', '31UFP', '31UDQ'].includes(mgrs_id));
+        
+        const unique_items = filtered_unique_mgrs_ids.map(mgrs_id => items.find(item => item.properties['sentinel:MGRS tile'] === mgrs_id));
         // console.log(unique_items)
 
         // const imageOverlayGroup = L.layerGroup();

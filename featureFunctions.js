@@ -133,7 +133,7 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
 
   
   
-  async function fetchDataOverFeature(map, layer, dropDownContainer, titilerConfig, searchBody) {
+  async function fetchDataOverFeature(map, layer, dropDownContainer, titilerConfig, searchBody, addedGeoTiffLayers, layerControl) {
 
     
   
@@ -253,6 +253,60 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
       }
     }
 
+
+    /**
+     * Removes a geoTiff layer from the map and the layer control.
+     * @param {string} titilerURL - The titiler URL of the feature.
+     */
+    function removeGeoTiffLayer(titilerURL) {
+      addedGeoTiffLayers.forEach(layer => {
+        if (layer._url === titilerURL) {
+          layerControl.removeLayer(layer);
+          map.removeLayer(layer);
+          const layerIndex = addedGeoTiffLayers.indexOf(layer);
+          if (layerIndex !== -1) {
+            addedGeoTiffLayers.splice(layerIndex, 1);
+          }
+        }
+      });
+    }
+
+    /**
+     * Adds a geoTiff layer to the map and the layer control.
+     * @param {string} titilerURL - The titiler URL of the feature.
+     * @param {string} featureId - The id of the feature.
+     */
+    function addGeoTiffLayer(titilerURL, featureId) {
+      const geoTiffLayer = L.tileLayer(titilerURL, {
+        maxZoom: 18,
+        minZoom: 5,
+        attribution: 'NCEO ARD'
+      }).addTo(map);
+      layerControl.addOverlay(geoTiffLayer, featureId);
+      addedGeoTiffLayers.push(geoTiffLayer);
+    }
+
+    /**
+     * Returns a function that handles click events on time dots.
+     * @param {HTMLElement} timeDot - The time dot element.
+     * @param {string} titilerURL - The titiler URL of the feature.
+     * @param {string} featureId - The id of the feature.
+     * @returns {function} - The event handler function.
+     */
+    function createpreviewBoxClickHandler(previewBox, titilerURL, featureId) {
+      return () => {
+        if (previewBox.addedToMap) {
+          removeGeoTiffLayer(titilerURL);
+          previewBox.addedToMap = false;
+          previewBox.classList.remove('active-preview-box'); // Remove the yellow border
+        } else {
+          previewBox.addedToMap = true;
+          addGeoTiffLayer(titilerURL, featureId);
+          previewBox.classList.add('active-preview-box'); // Add the yellow border
+        }
+      };
+    }
+
     
     function createImagePreviewBox(feature) {
       const previewBox = document.createElement('div');
@@ -266,6 +320,22 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
       const url = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
       // createImageFromUrl(tiffUrl, previewBox);
       createImageFromUrl(url, previewBox, bbox, previewWidth, previewHeight, mask)
+  
+      const titiler_endpoint = "https://titiler.xyz";
+      const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
+      const paras = {
+          url: stac_item,
+          expression: "(B8A-B04)/(B8A+B04)",  // NDVI
+          rescale: "0,1",
+          minzoom: 13,
+          maxzoom: 18,
+          colormap_name: "reds",
+      };
+
+      var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${titilerConfig.expression}&rescale=${paras.rescale}&colormap_name=${titilerConfig.colormap}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
+      
+      previewBox.onclick = createpreviewBoxClickHandler(previewBox, titilerURL, feature.id);
+  
       return previewBox;
     }
     
@@ -949,7 +1019,7 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle || ((layer instanceof L.CircleMarker) && layer instanceof L.Circle)){
       dropDownContainer.classList.add('drop-down-container-polygon');
       addMouseEventsWithDelay(cell, dropDownContainer, 'grid');
-      fetchDataOverFeature(map, layer, dropDownContainer, titilerConfig,searchBody);
+      fetchDataOverFeature(map, layer, dropDownContainer, titilerConfig,searchBody, addedGeoTiffLayers, layerControl);
       
     } else if (layer instanceof L.CircleMarker){
       dropDownContainer.classList.add('drop-down-container-circle-marker');
