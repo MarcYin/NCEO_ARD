@@ -293,7 +293,23 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
      * @param {string} featureId - The id of the feature.
      * @returns {function} - The event handler function.
      */
-    function createpreviewBoxClickHandler(previewBox, titilerURL, featureId) {
+    function createpreviewBoxClickHandler(previewBox, feature) {
+      const titiler_endpoint = "https://titiler.xyz";
+      const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
+      function createParas() {
+          return {
+              url: stac_item,
+              expression: feature.properties.expression,
+              rescale: "0,1",
+              minzoom: 13,
+              maxzoom: 18,
+              colormap_name: feature.properties.colormap_name,
+          };
+      }
+    
+      const paras = createParas();
+
+      var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${paras.expression}&rescale=${paras.rescale}&colormap_name=${titilerConfig.colormap}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
       return () => {
         if (previewBox.addedToMap) {
           removeGeoTiffLayer(titilerURL);
@@ -301,7 +317,8 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
           previewBox.classList.remove('active-preview-box'); // Remove the yellow border
         } else {
           previewBox.addedToMap = true;
-          addGeoTiffLayer(titilerURL, featureId);
+          addGeoTiffLayer(titilerURL, feature.id);
+          console.log(titilerURL);
           previewBox.classList.add('active-preview-box'); // Add the yellow border
         }
       };
@@ -320,21 +337,8 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
       const url = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
       // createImageFromUrl(tiffUrl, previewBox);
       createImageFromUrl(url, previewBox, bbox, previewWidth, previewHeight, mask)
-  
-      const titiler_endpoint = "https://titiler.xyz";
-      const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
-      const paras = {
-          url: stac_item,
-          expression: "(B8A-B04)/(B8A+B04)",  // NDVI
-          rescale: "0,1",
-          minzoom: 13,
-          maxzoom: 18,
-          colormap_name: "reds",
-      };
 
-      var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${titilerConfig.expression}&rescale=${paras.rescale}&colormap_name=${titilerConfig.colormap}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
-      
-      previewBox.onclick = createpreviewBoxClickHandler(previewBox, titilerURL, feature.id);
+      previewBox.onclick = createpreviewBoxClickHandler(previewBox, feature);
   
       return previewBox;
     }
@@ -387,6 +391,11 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
         feature => feature.properties['sentinel:MGRS tile'] === map.mgrsTile
     );
 
+    features.forEach(feature => {
+      feature.properties.expression = titilerConfig.expression;
+      feature.properties.colormap_name = titilerConfig.colormap;
+      return feature;
+    });
     // Create image preview boxes for each feature
     const previewBoxPromises = features.map(createImagePreviewBox);
     const previewBoxes = await Promise.all(previewBoxPromises);
@@ -713,6 +722,12 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
       const filteredDatetimeList = filteredList.map(item => item.datetime);
       const filteredFeatures = filteredList.map(item => item.feature);
 
+      filteredFeatures.forEach(feature => {
+        feature.properties.expression = titilerConfig.expression;
+        feature.properties.colormap_name = titilerConfig.colormap;
+        return feature;
+      });
+
       // Preparing for plotting
       let originalMarkerColor = 'rgba(6, 133, 244, 0.8)';
       const colors = new Array(filteredPixelValues.length).fill(originalMarkerColor);
@@ -795,17 +810,25 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
 
         const titiler_endpoint = "https://titiler.xyz";
         const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${clickedFeature.id}.json`;
-        const paras = {
-            url: stac_item,
-            expression: "(B8A-B04)/(B8A+B04)",  // NDVI
-            rescale: "0,1",
-            minzoom: 13,
-            maxzoom: 18,
-            colormap_name: "reds",
-        };
-
-        var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${titilerConfig.expression}&rescale=${paras.rescale}&colormap_name=${titilerConfig.colormap}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
         
+        function createParas() {
+            // const expression = titilerConfig.expression;
+            // const colormap_name = titilerConfig.colormap;
+        
+            return {
+                url: stac_item,
+                expression: clickedFeature.properties.expression,
+                rescale: "0,1",
+                minzoom: 13,
+                maxzoom: 18,
+                colormap_name: clickedFeature.properties.colormap_name,
+            };
+        }
+        
+        const paras = createParas();
+        
+        var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${paras.expression}&rescale=${paras.rescale}&colormap_name=${paras.colormap_name}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
+        console.log(paras.expression)
         // // url = encodeURIComponent(url)
         // console.log(url)
         // L.tileLayer(url, {
@@ -837,6 +860,15 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
     const previewContainer = document.createElement('div');
     previewContainer.className = 'preview-container';
 
+    const titleText = decodeURIComponent(titilerConfig.expression);
+    const titleElement = document.createElement('h1');
+    titleElement.textContent = titleText;
+    titleElement.style.fontSize = '14px'; // Set the font size smaller
+    titleElement.style.color = 'white'; // Set the text color to white
+    
+    previewContainer.style.textAlign = 'center'; // Center text within the container
+    previewContainer.appendChild(titleElement);
+    
     const svgContainer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgContainer.classList.add('svg-container');
 
