@@ -723,8 +723,31 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
       const filteredFeatures = filteredList.map(item => item.feature);
 
       filteredFeatures.forEach(feature => {
-        feature.properties.expression = titilerConfig.expression;
-        feature.properties.colormap_name = titilerConfig.colormap;
+        // feature.properties.expression = titilerConfig.expression;
+        // feature.properties.colormap_name = titilerConfig.colormap;
+
+        const titiler_endpoint = "https://titiler.xyz";
+        const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${feature.id}.json`;
+        
+        function createParas() {
+            // const expression = titilerConfig.expression;
+            // const colormap_name = titilerConfig.colormap;
+        
+            return {
+                url: stac_item,
+                expression: titilerConfig.expression,
+                rescale: "0,1",
+                minzoom: 13,
+                maxzoom: 18,
+                colormap_name: titilerConfig.colormap,
+            };
+        }
+        
+        const paras = createParas();
+        
+        const titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${paras.expression}&rescale=${paras.rescale}&colormap_name=${paras.colormap_name}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
+        
+        feature.properties.titilerURL = titilerURL;
         return feature;
       });
 
@@ -808,27 +831,30 @@ const stacApiSearchUrl = 'https://192.171.169.103/search';
         // const titilerEndpoint = "https://titiler.xyz";
         // const titilerURL = `${titilerEndpoint}/cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${urlToGeotiffFile}&bidx=1&bidx=2&bidx=3&rescale=0,128`;
 
-        const titiler_endpoint = "https://titiler.xyz";
-        const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${clickedFeature.id}.json`;
+        // const titiler_endpoint = "https://titiler.xyz";
+        // const stac_item = `https://gws-access.jasmin.ac.uk/public/nceo_ard/NCEO_ARD_STAC_API/UK-sentinel-2/${clickedFeature.id}.json`;
         
-        function createParas() {
-            // const expression = titilerConfig.expression;
-            // const colormap_name = titilerConfig.colormap;
+        // function createParas() {
+        //     // const expression = titilerConfig.expression;
+        //     // const colormap_name = titilerConfig.colormap;
         
-            return {
-                url: stac_item,
-                expression: clickedFeature.properties.expression,
-                rescale: "0,1",
-                minzoom: 13,
-                maxzoom: 18,
-                colormap_name: clickedFeature.properties.colormap_name,
-            };
-        }
+        //     return {
+        //         url: stac_item,
+        //         expression: clickedFeature.properties.expression,
+        //         rescale: "0,1",
+        //         minzoom: 13,
+        //         maxzoom: 18,
+        //         colormap_name: clickedFeature.properties.colormap_name,
+        //     };
+        // }
         
-        const paras = createParas();
+        // const paras = createParas();
         
-        var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${paras.expression}&rescale=${paras.rescale}&colormap_name=${paras.colormap_name}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
-        console.log(paras.expression)
+        // var titilerURL = `${titiler_endpoint}/stac/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${paras.url}&expression=${paras.expression}&rescale=${paras.rescale}&colormap_name=${paras.colormap_name}&minzoom=${paras.minzoom}&maxzoom=${paras.maxzoom}&asset_as_band=True`
+        // console.log(paras.expression)
+
+        var titilerURL = clickedFeature.properties.titilerURL
+        console.log(titilerURL)
         // // url = encodeURIComponent(url)
         // console.log(url)
         // L.tileLayer(url, {
